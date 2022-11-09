@@ -119,7 +119,7 @@ const BlogList = (props: Props) => {
         return {
             stt: index,
             title: item.title,
-            content: item.content,
+            content: item.desc,
             category: item.categoryId.name,
             image: item.thumbnail,
             action: item
