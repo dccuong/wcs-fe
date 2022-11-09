@@ -1,15 +1,19 @@
 import React, { useRef } from "react";
 import emailjs from "@emailjs/browser";
+import { useRouter } from "next/router";
 type Props = {};
 
 const Contact = (props: Props) => {
   const form = useRef<any>();
+  const route = useRouter();
   const sendEmail = (e: any) => {
     e.preventDefault();
 
     emailjs.sendForm("service_7magxxi", "template_qpun9jd", form.current, "GB0nRglh2RmNxpQsu").then(
       (result) => {
         console.log(result.text);
+        alert('Gửi thành công !')
+        route.push('/contact')
       },
       (error) => {
         console.log(error.text);
