@@ -1,37 +1,59 @@
 import Head from "next/head";
-
+import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/router";
-import React, { ReactElement, useState, useEffect } from "react";
+import React, { ReactElement, useEffect, useRef, useState } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
-
 import { AdminLayout } from "../../../../layouts";
 import { NextPageWithLayout } from "../../../../models/layout";
 import { getBlogCates } from "../../../../redux/blogCateSlice";
-import { getBlog, updateBlog } from "../../../../redux/blogSlice";
+import { addBlog, getBlog, updateBlog } from "../../../../redux/blogSlice";
 import { RootState } from "../../../../redux/store";
-import { addUser, getUser, updateUser } from "../../../../redux/userSlice";
+// import { addUser } from "../../../../redux/userSlice";
 import { uploadImage } from "../../../../untils";
-
+import dynamic from 'next/dynamic';
+import { useRouter } from "next/router";
+const ReactQuill = dynamic(import('react-quill'), { ssr: false });
 type Props = {};
 
 type Inputs = {
     title: string;
-    // slug: string;
+    slug: string;
     desc: string;
     content: string;
     categoryId: string;
     thumbnail: {
         0: File;
     };
+
 };
 
-const EditBlog: NextPageWithLayout = (props: Props) => {
+const AddBlog: NextPageWithLayout = (props: Props) => {
     const [preview, setPreview] = useState<string>();
-    const dispatch = useDispatch<any>();
     const blogCate = useSelector((state: RootState) => state.blogCate.blogCates);
+    const dispatch = useDispatch<any>();
+    const editor = useRef(null);
+    const [content, setContent] = useState('');
+    const [imageUrl, setImageUrl] = useState();
+
+    const modules = {
+        toolbar: [
+            [{ 'header': [1, 2, false] }],
+            ['bold', 'italic', 'underline', 'strike', 'blockquote'],
+            [{ 'list': 'ordered' }, { 'list': 'bullet' }, { 'indent': '-1' }, { 'indent': '+1' }],
+            ['link', 'image'],
+            ['clean']
+        ],
+    }
+
+    const formats = [
+        'header',
+        'bold', 'italic', 'underline', 'strike', 'blockquote',
+        'list', 'bullet', 'indent',
+        'link', 'image'
+    ]
+
 
     const router = useRouter();
     const { id } = router.query;
@@ -44,51 +66,50 @@ const EditBlog: NextPageWithLayout = (props: Props) => {
 
     useEffect(() => {
         dispatch(getBlogCates());
-    }, [dispatch]);
+
+        (async () => {
+            try {
+                const user = await dispatch(getBlog(id)).unwrap();
+                setContent(user.content)
+                reset(user);
+                setPreview(user.thumbnail);
+            } catch (error) {
+                console.log(error);
+            }
+        })();
+    }, [dispatch, id, reset]);
     const onSubmit: SubmitHandler<Inputs> = async (values: Inputs) => {
         try {
             if (typeof values.thumbnail === "object") {
                 const { data } = await uploadImage(values.thumbnail[0]);
                 values.thumbnail = data.url;
             }
-
-            await dispatch(updateBlog(values)).unwrap();
+            await dispatch(updateBlog({ ...values, content: content })).unwrap();
             toast.success("Cập nhật  thành công");
             router.push("/admin/blogs");
+            console.log(content);
         } catch (error) {
             console.log(error);
         }
     };
-    useEffect(() => {
-        (async () => {
-            try {
-                const user = await dispatch(getBlog(id)).unwrap();
-
-                reset(user);
-                setPreview(user.avatar);
-            } catch (error) {
-                console.log(error);
-            }
-        })();
-    }, [dispatch, id, reset]);
     return (
         <>
             <Head>
-                <title>Sửa bài viết</title>
+                <title>Add User</title>
             </Head>
             <header className="z-10 fixed top-0 left-0 md:left-60 right-0 px-4 py-1.5 bg-white shadow-[0_1px_2px_rgba(0,0,0,0.1)] flex items-center justify-between">
                 <div className="flex items-center text-sm text-gray-600">
                     <h5 className="relative pr-5 after:content-[''] after:absolute after:w-[1px] after:h-4 after:top-1/2 after:-translate-y-1/2 after:right-2.5 after:bg-gray-300">
-                        Users
+                        Blogs
                     </h5>
-                    <span>Add User</span>
+                    <span>Add Blog</span>
                 </div>
                 <Link href="/admin/blogs">
                     <button
                         type="button"
                         className="inline-flex items-center px-2 py-1 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                     >
-                        DS Bài Viết
+                        DS Bài viết
                     </button>
                 </Link>
             </header>
@@ -98,7 +119,7 @@ const EditBlog: NextPageWithLayout = (props: Props) => {
                     <div className="shadow overflow-hidden sm:rounded-md">
                         <div className="px-4 py-5 bg-white sm:p-6">
                             <span className="font-semibold mb-4 block text-xl">
-                                Sửa bài viết mới
+                                Sửa bài viết
                             </span>
                             <div className="grid grid-cols-6 gap-3">
                                 <div className="col-span-6">
@@ -119,7 +140,25 @@ const EditBlog: NextPageWithLayout = (props: Props) => {
                                         {errors.title?.message}
                                     </div>
                                 </div>
-                                {/* 
+                                                                <div className="col-span-6">
+                                    <label
+                                        htmlFor="form__add-user-fullname"
+                                        className="block text-sm font-medium text-gray-700"
+                                    >
+                                        Desc
+                                    </label>
+                                    <input
+                                        type="text"
+                                        {...register("desc", { required: "Vui lòng không để trống" })}
+                                        id="form__add-user-fullname"
+                                        className="py-2 px-3 mt-1 border focus:ring-indigo-500 focus:border-indigo-500 focus:outline-none block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
+                                        placeholder=""
+                                    />
+                                    <div className="text-sm mt-0.5 text-red-500">
+                                        {errors.title?.message}
+                                    </div>
+                                </div>
+
                                 <div className="col-span-6 md:col-span-3">
                                     <label
                                         htmlFor="form__add-user-role"
@@ -136,7 +175,7 @@ const EditBlog: NextPageWithLayout = (props: Props) => {
                                     <div className="text-sm mt-0.5 text-red-500">
 
                                     </div>
-                                </div> */}
+                                </div>
 
                                 {/* <div className="col-span-6 md:col-span-3">
                                     <label
@@ -159,26 +198,7 @@ const EditBlog: NextPageWithLayout = (props: Props) => {
                                     </div>
                                 </div> */}
 
-                                <div className="col-span-6">
-                                    <label
-                                        htmlFor="form__add-user-email"
-                                        className="block text-sm font-medium text-gray-700"
-                                    >
-                                        Content
-                                    </label>
-                                    <input
-                                        {...register("content", {
-                                            required: "Vui lòng nhập địa chỉ email",
-                                        })}
-                                        type="text"
-                                        id="form__add-user-email"
-                                        className="py-2 px-3 mt-1 border focus:ring-indigo-500 focus:border-indigo-500 focus:outline-none block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
-                                        placeholder=""
-                                    />
-                                    <div className="text-sm mt-0.5 text-red-500">
-                                        {errors.content?.message}
-                                    </div>
-                                </div>
+
 
                                 <div className="col-span-6">
                                     <label
@@ -187,13 +207,9 @@ const EditBlog: NextPageWithLayout = (props: Props) => {
                                     >
                                         Nội dung bài viết
                                     </label>
-
-                                    <textarea id=""  {...register("desc", {
-                                        required: "Vui lòng không để trống",
-                                    })} className="py-2 px-3 mt-1 border focus:ring-indigo-500 focus:border-indigo-500 focus:outline-none block w-full shadow-sm sm:text-sm border-gray-300 rounded-md h-[100px]"
-                                    >
-
-                                    </textarea>
+   {/* this */}
+                                    <ReactQuill modules={modules}
+                                        formats={formats} theme="snow" value={content}  onChange={setContent} ></ReactQuill>
                                     <div className="text-sm mt-0.5 text-red-500">
                                         {errors.desc?.message}
                                     </div>
@@ -244,9 +260,7 @@ const EditBlog: NextPageWithLayout = (props: Props) => {
                                                     <span>Upload a file</span>
                                                     <input
                                                         id="form__add-user-avatar"
-                                                        {...register("thumbnail", {
-                                                            required: "Vui lòng chọn ảnh",
-                                                        })}
+                                                        {...register("thumbnail")}
                                                         onChange={(e: any) => {
                                                             setPreview(
                                                                 URL.createObjectURL(e.target.files[0])
@@ -280,11 +294,11 @@ const EditBlog: NextPageWithLayout = (props: Props) => {
                         </div>
                     </div>
                 </form>
-            </div>
+            </div >
         </>
     );
 };
 
-EditBlog.getLayout = (page: ReactElement) => <AdminLayout>{page}</AdminLayout>;
+AddBlog.getLayout = (page: ReactElement) => <AdminLayout>{page}</AdminLayout>;
 
-export default EditBlog;
+export default AddBlog;
