@@ -5,7 +5,7 @@ import { Provider } from "react-redux";
 import persistor, { store } from "../redux/store";
 import { PersistGate } from "redux-persist/integration/react";
 import 'antd/dist/antd.css'
-
+import 'react-quill/dist/quill.snow.css';
 import { config } from "@fortawesome/fontawesome-svg-core";
 import "@fortawesome/fontawesome-svg-core/styles.css";
 config.autoAddCss = false;
