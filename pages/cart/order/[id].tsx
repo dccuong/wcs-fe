@@ -4,7 +4,7 @@ import Image from 'next/image'
 type Props = {}
 
 const cartDetail = (props: Props) => {
-   
+
     return (
 
         <div>

@@ -3,18 +3,17 @@ import Link from "next/link";
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Swal from "sweetalert2";
+import { deleteSlider, getSliders } from "../../../redux/sliderSlice";
 import { RootState } from "../../../redux/store";
-import { deleteUser, getUsers } from "../../../redux/userSlice";
-import { formatDate } from "../../../untils";
-
+// import { deleteUser, getUsers } from "../../../redux/userSlice";
 type Props = {};
 
-const UserList = (props: Props) => {
-  const users = useSelector((state: RootState) => state.user.users);
+const SliderList = (props: Props) => {
+  const imgs = useSelector((state: RootState) => state.slider.sliders);
   const dispatch = useDispatch<any>();
 
   useEffect(() => {
-    dispatch(getUsers());
+    dispatch(getSliders());
   }, [dispatch]);
 
   const handleRemove = (id: any) => {
@@ -28,7 +27,7 @@ const UserList = (props: Props) => {
       confirmButtonText: "Yes, delete it!",
     }).then(async (result) => {
       if (result.isConfirmed) {
-        await dispatch(deleteUser(id)).unwrap();
+        await dispatch(deleteSlider(id)).unwrap();
         Swal.fire("Thành công!", "Xóa thành công.", "success");
       }
     });
@@ -53,33 +52,25 @@ const UserList = (props: Props) => {
             className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
           >
             {" "}
-            User{" "}
+            Title{" "}
           </th>
           <th
             scope="col"
             className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
           >
             {" "}
-            Vai trò{" "}
-          </th>
-          <th
-            scope="col"
-            className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-          >
-            {" "}
-            Ngày tạo{" "}
+            image{" "}
           </th>
           <th
             scope="col"
             className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider"
           >
-            {" "}
             Actions{" "}
           </th>
         </tr>
       </thead>
       <tbody className="bg-white divide-y divide-gray-200">
-        {users?.map((item, index) => (
+        {imgs?.map((item, index) => (
           <tr key={index}>
             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
               {++index}
@@ -87,33 +78,32 @@ const UserList = (props: Props) => {
             <td className="px-6 py-4 whitespace-nowrap">
               <div className="flex items-center">
                 <div className="flex-shrink-0 h-10 w-10">
-                  <div className="w-4 h-4 relative rounded-full object-cover">
-                    {item.avatar && (
-                      <img src={item.avatar} alt="" className="rounded-full" />
-                    )}
+                  <div className="w-10 h-10 relative rounded-full object-cover">
+                    {item.title}
                   </div>
-                </div>
-                <div className="ml-4">
-                  <div className="text-sm font-medium text-gray-900">
-                    {item.name}
-                  </div>
-                  <div className="text-sm text-gray-500">{item.email}</div>
-                  <div className="text-sm text-gray-500">{item.phone}</div>
                 </div>
               </div>
             </td>
-            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-              {item.role ? "Admin" : "User"}
-            </td>
-            <td className="px-6 py-4 whitespace-nowrap text-sm text-blue-500">
-              {/* {formatDate(item.createdAt)} */}
+            <td className="px-6 py-4 whitespace-nowrap">
+              <div className="flex items-center">
+                <div className="flex-shrink-0 h-10 w-10">
+                  <picture>
+                    <img width={100} src={item.url1} alt="" />
+                  </picture>
+                </div>
+              </div>
             </td>
             <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-              <Link href={`/admin/users/${item._id}/edit`}>
+              <Link href={`/admin/sliders/${item._id}/edit`}>
                 <span className="h-8 inline-flex items-center px-3 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
                   Edit
                 </span>
               </Link>
+              {/* <Link href={`/admin/blogs/${item._id}/info`}>
+                                <span className="h-8 inline-flex items-center px-3 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                                    Xem chi tết
+                                </span>
+                            </Link> */}
               <button
                 onClick={() => handleRemove(item._id)}
                 className="h-8 inline-flex items-center px-3 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 ml-3"
@@ -128,4 +118,4 @@ const UserList = (props: Props) => {
   );
 };
 
-export default UserList;
+export default SliderList;

@@ -261,22 +261,30 @@ const Category = (props: Props) => {
                   className="product__item__pic set-bg"
                  
                 >
+                  <picture>
                   <img src="img/product/product-2.jpg" alt="" />
+                  </picture>
                   <ul className="product__hover">
                     <li>
                       <a href="#">
+                        <picture>
                         <img src="img/icon/heart.png" alt="" />
+                        </picture>
                       </a>
                     </li>
                     <li>
                       <a href="#">
+                        <picture>
                         <img src="../../img/icon/compare.png" alt="" />{" "}
+                        </picture>
                         <span>Compare</span>
                       </a>
                     </li>
                     <li>
                       <a href="#">
+                        <picture>
                         <img src="../../img/icon/cart.png" alt="" />
+                        </picture>
                       </a>
                     </li>
                   </ul>
@@ -314,23 +322,31 @@ const Category = (props: Props) => {
                   className="product__item__pic set-bg"
                  
                 >
+                  <picture>
                   <img src="img/product/product-3.jpg" alt="" />
+                  </picture>
                   <span className="label">Sale</span>
                   <ul className="product__hover">
                     <li>
                       <a href="#">
+                        <picture>
                         <img src="img/icon/heart.png" alt="" />
+                        </picture>
                       </a>
                     </li>
                     <li>
                       <a href="#">
+                        <picture>
                         <img src="img/icon/compare.png" alt="" />{" "}
+                        </picture>
                         <span>Compare</span>
                       </a>
                     </li>
                     <li>
                       <a href="#">
+                        <picture>
                         <img src="../../public/img/icon/" alt="" />
+                        </picture>
                       </a>
                     </li>
                   </ul>

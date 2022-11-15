@@ -1,6 +1,6 @@
 import React from "react";
 import { ClientLayout } from "../../layouts";
-
+import Image from 'next/image'
 type Props = {};
 
 const About = (props: Props) => {
@@ -29,7 +29,9 @@ const About = (props: Props) => {
           <div className="flex flex-wrap ">
             <div className="lg:w-full pr-4 pl-4">
               <div className="about__pic">
+                <picture>
                 <img src="img/about/about-us.jpg" alt="" />
+                </picture>
               </div>
             </div>
           </div>
@@ -60,7 +62,9 @@ const About = (props: Props) => {
           <div className="flex flex-wrap ">
             <div className="lg:w-1/4  md:w-1/2  sm:w-1/2 pr-4 pl-4">
               <div className="team__item">
+                <picture>
                 <img src="img/about/team-1.jpg" alt="" />
+                </picture>
                 <h4>John Smith</h4>
                 <span>Fashion Design</span>
               </div>
@@ -82,7 +86,9 @@ const About = (props: Props) => {
           <div className="flex flex-wrap ">
             <div className="lg:w-1/4 md:w-1/3  sm:w-1/3 pr-4 pl-4 w-1/2">
               <a href="#" className="client__item">
+                <picture>
                 <img src="img/clients/client-1.png" alt="" />
+                </picture>
               </a>
             </div>
           </div>

@@ -4,17 +4,18 @@ import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Swal from "sweetalert2";
 import { RootState } from "../../../redux/store";
-import { deleteUser, getUsers } from "../../../redux/userSlice";
+// import { deleteUser, getUsers } from "../../../redux/userSlice";
+import { deleteVouche, getVouches } from "../../../redux/voucheSlice";
 import { formatDate } from "../../../untils";
 
 type Props = {};
 
-const UserList = (props: Props) => {
-  const users = useSelector((state: RootState) => state.user.users);
+const VoucheList = (props: Props) => {
+  const vouches = useSelector((state: RootState) => state.vouche.vouches);
   const dispatch = useDispatch<any>();
 
   useEffect(() => {
-    dispatch(getUsers());
+    dispatch(getVouches());
   }, [dispatch]);
 
   const handleRemove = (id: any) => {
@@ -28,7 +29,7 @@ const UserList = (props: Props) => {
       confirmButtonText: "Yes, delete it!",
     }).then(async (result) => {
       if (result.isConfirmed) {
-        await dispatch(deleteUser(id)).unwrap();
+        await dispatch(deleteVouche(id)).unwrap();
         Swal.fire("Thành công!", "Xóa thành công.", "success");
       }
     });
@@ -53,21 +54,29 @@ const UserList = (props: Props) => {
             className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
           >
             {" "}
-            User{" "}
+            Code{" "}
           </th>
           <th
             scope="col"
             className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
           >
             {" "}
-            Vai trò{" "}
+            Trạng thái{" "}
+          </th>
+          
+          <th
+            scope="col"
+            className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+          >
+            {" "}
+            Số lượng{" "}
           </th>
           <th
             scope="col"
             className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
           >
             {" "}
-            Ngày tạo{" "}
+            Giảm giá{"(%)"}
           </th>
           <th
             scope="col"
@@ -79,37 +88,54 @@ const UserList = (props: Props) => {
         </tr>
       </thead>
       <tbody className="bg-white divide-y divide-gray-200">
-        {users?.map((item, index) => (
+        {vouches?.map((item, index) => (
           <tr key={index}>
             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
               {++index}
             </td>
             <td className="px-6 py-4 whitespace-nowrap">
-              <div className="flex items-center">
-                <div className="flex-shrink-0 h-10 w-10">
-                  <div className="w-4 h-4 relative rounded-full object-cover">
-                    {item.avatar && (
-                      <img src={item.avatar} alt="" className="rounded-full" />
-                    )}
-                  </div>
-                </div>
+              <div className="flex items-center">               
                 <div className="ml-4">
                   <div className="text-sm font-medium text-gray-900">
-                    {item.name}
+                    {item.code}
                   </div>
-                  <div className="text-sm text-gray-500">{item.email}</div>
-                  <div className="text-sm text-gray-500">{item.phone}</div>
+                 
                 </div>
               </div>
             </td>
-            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-              {item.role ? "Admin" : "User"}
+            <td className="px-6 py-4 whitespace-nowrap">
+              <div className="flex items-center">               
+                <div className="ml-4">
+                  <div className="text-sm font-medium text-gray-900">
+                  {item.status ? "Còn hạn" :  "hết hạn"}
+                  </div>   
+                </div>
+              </div>
             </td>
-            <td className="px-6 py-4 whitespace-nowrap text-sm text-blue-500">
-              {/* {formatDate(item.createdAt)} */}
+            <td className="px-6 py-4 whitespace-nowrap">
+              <div className="flex items-center">               
+                <div className="ml-4">
+                  <div className="text-sm font-medium text-gray-900">
+                  {item.amount} <br />
+                  {/* {formatDate(item.createdAt)} */}
+                  </div>   
+                </div>
+              </div>
             </td>
+            <td className="px-6 py-4 whitespace-nowrap">
+              <div className="flex items-center">               
+                <div className="ml-4">
+                  <div className="text-sm font-medium text-gray-900">
+                  {item.percent} <br />
+                 
+                  </div>   
+                </div>
+              </div>
+            </td>
+           
+           
             <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-              <Link href={`/admin/users/${item._id}/edit`}>
+              <Link href={`/admin/vouches/${item._id}/edit`}>
                 <span className="h-8 inline-flex items-center px-3 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
                   Edit
                 </span>
@@ -128,4 +154,4 @@ const UserList = (props: Props) => {
   );
 };
 
-export default UserList;
+export default VoucheList;

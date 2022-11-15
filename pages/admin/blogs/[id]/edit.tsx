@@ -140,7 +140,7 @@ const AddBlog: NextPageWithLayout = (props: Props) => {
                                         {errors.title?.message}
                                     </div>
                                 </div>
-                                <div className="col-span-6">
+                                                                <div className="col-span-6">
                                     <label
                                         htmlFor="form__add-user-fullname"
                                         className="block text-sm font-medium text-gray-700"
@@ -207,7 +207,7 @@ const AddBlog: NextPageWithLayout = (props: Props) => {
                                     >
                                         Nội dung bài viết
                                     </label>
-                                    {/* this */}
+   {/* this */}
                                     <ReactQuill modules={modules}
                                         formats={formats} theme="snow" value={content}  onChange={setContent} ></ReactQuill>
                                     <div className="text-sm mt-0.5 text-red-500">
@@ -220,14 +220,16 @@ const AddBlog: NextPageWithLayout = (props: Props) => {
                                         Xem trước ảnh
                                     </label>
                                     <div className="mt-1 w-40 h-40 relative">
-                                        <img
-                                            src={
-                                                preview ||
-                                                "https://drums71.ru/wp-content/uploads/2018/02/no-img.jpg"
-                                            }
-                                            alt="Preview Image"
-                                            className="h-40 w-40 rounded-full object-cover"
-                                        />
+                                        <picture>
+                                            <img
+                                                src={
+                                                    preview ||
+                                                    "https://drums71.ru/wp-content/uploads/2018/02/no-img.jpg"
+                                                }
+                                                alt="Preview Image"
+                                                className="h-40 w-40 rounded-full object-cover"
+                                            />
+                                        </picture>
                                     </div>
                                 </div>
                                 <div className="col-span-6">

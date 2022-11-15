@@ -1,9 +1,10 @@
 
 import { Tblog } from "../models/blogs";
+import { axiosServer } from "./config";
 import axiosClient from "./config";
 
 export const getAll = (): Promise<Tblog[]> => {
-    return axiosClient.get("/news");
+    return axiosServer.get("/news");
 };
 
 export const remove = (id: string): Promise<Tblog> => {
@@ -15,7 +16,7 @@ export const add = (blog: Tblog): Promise<Tblog> => {
 };
 
 export const get = (id: string): Promise<Tblog> => {
-    return axiosClient.get(`/news/${id}`);
+    return axiosServer.get(`/news/${id}`);
 };
 
 export const update = (blog: Tblog): Promise<Tblog> => {
@@ -25,3 +26,6 @@ export const update = (blog: Tblog): Promise<Tblog> => {
 export const blogCate = (id: any) => {
     return axiosClient.get(`/news?ct=${id}`);
 };
+export const getBySlug = (slug: any): Promise<Tblog> => {
+    return axiosServer.get(`/news/${slug}/getBySlug`)
+}

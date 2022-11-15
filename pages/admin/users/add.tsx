@@ -187,14 +187,16 @@ const AddUser: NextPageWithLayout = (props: Props) => {
                     Xem trước ảnh
                   </label>
                   <div className="mt-1 w-40 h-40 relative">
-                    <img
-                      src={
-                        preview ||
-                        "https://drums71.ru/wp-content/uploads/2018/02/no-img.jpg"
-                      }
-                      alt="Preview Image"
-                      className="h-40 w-40 rounded-full object-cover"
-                    />
+                    <picture>
+                      <img
+                        src={
+                          preview ||
+                          "https://drums71.ru/wp-content/uploads/2018/02/no-img.jpg"
+                        }
+                        alt="Preview Image"
+                        className="h-40 w-40 rounded-full object-cover"
+                      />
+                    </picture>
                   </div>
                 </div>
                 <div className="col-span-6">
