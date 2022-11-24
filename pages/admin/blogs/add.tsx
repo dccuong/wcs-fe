@@ -1,7 +1,7 @@
 import Head from "next/head";
 import Image from "next/image";
 import Link from "next/link";
-import React, { ReactElement, useEffect, useState } from "react";
+import React, { ReactElement, useEffect, useRef, useState } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
@@ -12,7 +12,8 @@ import { addBlog } from "../../../redux/blogSlice";
 import { RootState } from "../../../redux/store";
 // import { addUser } from "../../../redux/userSlice";
 import { uploadImage } from "../../../untils";
-
+import dynamic from 'next/dynamic';
+const ReactQuill = dynamic(import('react-quill'), { ssr: false });
 type Props = {};
 
 type Inputs = {
@@ -31,6 +32,26 @@ const AddBlog: NextPageWithLayout = (props: Props) => {
     const [preview, setPreview] = useState<string>();
     const blogCate = useSelector((state: RootState) => state.blogCate.blogCates);
     const dispatch = useDispatch<any>();
+    const editor = useRef(null);
+    const [content, setContent] = useState('');
+    const [imageUrl, setImageUrl] = useState();
+
+    const modules = {
+        toolbar: [
+            [{ 'header': [1, 2, false] }],
+            ['bold', 'italic', 'underline', 'strike', 'blockquote'],
+            [{ 'list': 'ordered' }, { 'list': 'bullet' }, { 'indent': '-1' }, { 'indent': '+1' }],
+            ['link', 'image'],
+            ['clean']
+        ],
+    }
+
+    const formats = [
+        'header',
+        'bold', 'italic', 'underline', 'strike', 'blockquote',
+        'list', 'bullet', 'indent',
+        'link', 'image'
+    ]
 
     const {
         register,
@@ -47,8 +68,7 @@ const AddBlog: NextPageWithLayout = (props: Props) => {
         try {
             const { data } = await uploadImage(values.thumbnail[0]);
             values.thumbnail = data.url;
-
-            await dispatch(addBlog(values)).unwrap();
+            await dispatch(addBlog({...values, content: content})).unwrap();
             toast.success("Thêm bài viết thành công");
             reset();
             setPreview("");
@@ -105,6 +125,24 @@ const AddBlog: NextPageWithLayout = (props: Props) => {
                                         {errors.title?.message}
                                     </div>
                                 </div>
+                                <div className="col-span-6">
+                                    <label
+                                        htmlFor="form__add-user-fullname"
+                                        className="block text-sm font-medium text-gray-700"
+                                    >
+                                        Desc
+                                    </label>
+                                    <input
+                                        type="text"
+                                        {...register("desc", { required: "Vui lòng không để trống" })}
+                                        id="form__add-user-fullname"
+                                        className="py-2 px-3 mt-1 border focus:ring-indigo-500 focus:border-indigo-500 focus:outline-none block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
+                                        placeholder=""
+                                    />
+                                    <div className="text-sm mt-0.5 text-red-500">
+                                        {errors.title?.message}
+                                    </div>
+                                </div>
 
                                 <div className="col-span-6 md:col-span-3">
                                     <label
@@ -145,26 +183,7 @@ const AddBlog: NextPageWithLayout = (props: Props) => {
                                     </div>
                                 </div> */}
 
-                                <div className="col-span-6">
-                                    <label
-                                        htmlFor="form__add-user-email"
-                                        className="block text-sm font-medium text-gray-700"
-                                    >
-                                        Content
-                                    </label>
-                                    <input
-                                        {...register("content", {
-                                            required: "Vui lòng nhập địa chỉ email",
-                                        })}
-                                        type="text"
-                                        id="form__add-user-email"
-                                        className="py-2 px-3 mt-1 border focus:ring-indigo-500 focus:border-indigo-500 focus:outline-none block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
-                                        placeholder=""
-                                    />
-                                    <div className="text-sm mt-0.5 text-red-500">
-                                        {errors.content?.message}
-                                    </div>
-                                </div>
+                               
 
                                 <div className="col-span-6">
                                     <label
@@ -173,13 +192,9 @@ const AddBlog: NextPageWithLayout = (props: Props) => {
                                     >
                                         Nội dung bài viết
                                     </label>
-
-                                    <textarea id=""  {...register("desc", {
-                                        required: "Vui lòng không để trống",
-                                    })} className="py-2 px-3 mt-1 border focus:ring-indigo-500 focus:border-indigo-500 focus:outline-none block w-full shadow-sm sm:text-sm border-gray-300 rounded-md h-[100px]"
-                                    >
-
-                                    </textarea>
+                                    {/* this */}
+                                    <ReactQuill modules={modules}
+                                        formats={formats} theme="snow" value={content}  onChange={setContent} ></ReactQuill>
                                     <div className="text-sm mt-0.5 text-red-500">
                                         {errors.desc?.message}
                                     </div>
@@ -257,7 +272,7 @@ const AddBlog: NextPageWithLayout = (props: Props) => {
                             </div>
                         </div>
                         <div className="px-4 py-3 bg-gray-50 text-right sm:px-6">
-                            <button
+                            <button 
                                 type="submit"
                                 className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                             >
@@ -267,7 +282,7 @@ const AddBlog: NextPageWithLayout = (props: Props) => {
                         </div>
                     </div>
                 </form>
-            </div>
+            </div >
         </>
     );
 };
